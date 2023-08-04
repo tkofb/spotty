@@ -8,8 +8,6 @@ from spotipy.oauth2 import SpotifyOAuth
 from treeVisualizer import visualizeDict 
 
 class SpotipyObject:
-
-    amount = 0
     
     def __init__(self):
         self.requestUserAuthorization()
@@ -20,8 +18,13 @@ class SpotipyObject:
         self.clientId = os.getenv("CLIENT_ID")
         self.clientSecret = os.getenv("CLIENT_SECRET")
         
-        # self.scope = #Add Scope Needed
+        self.scope = 'playlist-read-private playlist-read-collaborative'
 
         self.spotifyObject = spotipy.Spotify(auth_manager=SpotifyOAuth( 
             scope=self.scope, client_id=self.clientId, client_secret=self.clientSecret, redirect_uri="http://localhost:8888/callback", 
-            cache_path='/home/jani/Projects/SpotifyListener/.cache-tkogds@gmail.com'))
+            cache_path='/home/jani/Projects/SpotifyToMP3/.cache-tkogds@gmail.com'))
+
+# #First step is to be able to download
+# sp = SpotipyObject()
+# userPlaylists = sp.spotifyObject.current_user_playlists()
+
