@@ -7,7 +7,7 @@ from spotipy.oauth2 import SpotifyOAuth
 from treeVisualizer import visualizeDict 
 from spotifyObject import SpotipyObject
 
-class PlaylistDefinition():
+class Playlists():
     def __init__(self):
         self.sp = SpotipyObject().spotifyObject
         self.testPlaylists = self.sp.current_user_playlists()['items']
@@ -19,14 +19,43 @@ class PlaylistDefinition():
     def assignPlaylistToID(self):
         self.idDict = dict()
         for pos, name in enumerate(self.testPlaylists):
-            print(f"{pos+1}. {self.testPlaylists[pos]['id']}")
             self.idDict[pos+1] = self.testPlaylists[pos]['id']
-        print(self.idDict)
+            
+    def askForPlaylistToDownload(self):
+        def askAgain():
+            print("INVALID PLAYLIST TRY AGAIN")
+            self.askForPlaylistToDownload()
         
-playlist = PlaylistDefinition()
-playlist.listPlaylists()
-playlist.assignPlaylistToID()
+        print("Which playlist would you like to download?")
+        print("------------------------------------------")
+        self.assignPlaylistToID()
+        self.listPlaylists()
+        print("------------------------------------------")
+        self.chosenPlaylist = input("Playlist to Download: ")
         
+        try:
+            givenValue = int(self.chosenPlaylist)
+            if givenValue not in self.idDict:
+                askAgain()
+        except Exception as e:
+            print()
+            print(e)
+            askAgain()
+            
+        
+            
+
+        
+class Songs(Playlists):
+    def __init__(self):
+        super().__init__()
+        
+    def getSongs(self):
+        pass
+    
+        
+playlist = Playlists()
+playlist.askForPlaylistToDownload()
 
 
 
