@@ -11,6 +11,7 @@ class Playlists():
     def __init__(self):
         self.sp = SpotipyObject().spotifyObject
         self.testPlaylists = self.sp.current_user_playlists()['items']
+        self.assignPlaylistToID()
 
     def listPlaylists(self):
         for pos, name in enumerate(self.testPlaylists):
@@ -23,39 +24,73 @@ class Playlists():
             
     def askForPlaylistToDownload(self):
         def askAgain():
+            print()
             print("INVALID PLAYLIST TRY AGAIN")
             self.askForPlaylistToDownload()
         
         print("Which playlist would you like to download?")
         print("------------------------------------------")
-        self.assignPlaylistToID()
         self.listPlaylists()
         print("------------------------------------------")
-        self.chosenPlaylist = input("Playlist to Download: ")
         
         try:
-            givenValue = int(self.chosenPlaylist)
-            if givenValue not in self.idDict:
+            self.chosenPlaylist = int(input("Playlist to Download: "))
+            if self.chosenPlaylist not in self.idDict:
                 askAgain()
         except Exception as e:
-            print()
-            print(e)
             askAgain()
             
-        
-            
-
         
 class Songs(Playlists):
     def __init__(self):
         super().__init__()
         
-    def getSongs(self):
-        pass
+    def songDict(self, hashcode):
+        songs = dict()
+        
+        #Spotify API only letrs you gain access to 100 songs in a playlist
+        self.songs = self.sp.playlist_items(self.idDict[hashcode], limit=100)
+        
+        print(len(self.songs['items']))
+        
+        for i in range(len(self.songs['items'])):
+            
+            songName = self.songs['items'][i]['track']['name']
+            
+            allArtists = " - "
+            amountOfArtists = len(self.songs['items'][i]['track']['artists'])
+            
+            for j in range(amountOfArtists):
+                artistName = self.songs['items'][i]['track']['artists'][j]['name']
+                if j == amountOfArtists - 1: 
+                    allArtists += artistName
+                    break
+                allArtists += f"{artistName}, "
+            
+            
+                
+            album = "" if self.songs['items'][i]['track']['album']['album_type'] != 'album' else f" | Album: {self.songs['items'][i]['track']['album']['name']}"
+            
+                
+            print(songName + allArtists + album)
+            
+        
+        return songs
+    
+    def specificPlaylistSongDict(self,playlistNumber):
+        if type(playlistNumber) != int or playlistNumber not in self.idDict:
+            return
+        else:
+            self.songDict(playlistNumber)
+    
+    def listSongsRequested(self):
+        self.songs = self.specificPlaylistSongDict(4)
+        
     
         
-playlist = Playlists()
-playlist.askForPlaylistToDownload()
+playlist = Songs()  
+playlist.listSongsRequested()
+
 
 
 
