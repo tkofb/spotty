@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Sample Python code for youtube.channels.list
-# See instructions for running these code samples locally:
-# https://developers.google.com/explorer-help/code-samples#python
-
 import os
 import json
 import requests
@@ -14,20 +8,42 @@ class YoutubeConversion(Songs):
     def __init__(self):
         super().__init__()
         self.specificPlaylistSongDict(5)
-        
-        
     
-    def getYoutubeIDs(self):
+    def getYoutubeURLS(self):
+        self.songToYoutube = dict()
+        songCount = 0
         url = "https://www.googleapis.com/youtube/v3/search"
-        params = {
-            "part":"snippet",
-            "key":"AIzaSyAAIReGu0D9R8eQf8WMUz-_ohrQ9hkdFE0",
-            "q": self.youtubeQuery[1]
-        }
-        queryRequest = requests.get(url=url, params=params) 
-        print(queryRequest.json()['items'][0])
+        
+        for songName in self.youtubeQuery.values():
+            params = {
+                "part":"id",
+                "key":"AIzaSyAAIReGu0D9R8eQf8WMUz-_ohrQ9hkdFE0",
+                "q": songName
+            }
+            queryRequest = requests.get(url=url, params=params)
+            
+            if 'error' in queryRequest.json():
+                print("Sorry max requests for the day have been reached.")
+                break
+            
+            songCount += 1
+            
+            videoId = queryRequest.json()['items'][0]['id']['videoId']
+            
+            youtubeUrl = "https://www.youtube.com/watch?v=" + videoId
+            
+            self.songToYoutube[songCount] = youtubeUrl
+            
+    def downloadYoutubeURL(self):
+        pass
+         
+            
+            
+            
+             
 
 
+if __name__ == "__main__":
+    youtube = YoutubeConversion()
+    youtube.getYoutubeIDs()
 
-youtube = YoutubeConversion()
-youtube.getYoutubeIDs()
