@@ -12,10 +12,17 @@ class Playlists():
         self.sp = SpotipyObject().spotifyObject
         self.testPlaylists = self.sp.current_user_playlists()['items']
         self.assignPlaylistToID()
+        self.playlistNames = dict()
 
+    def makeFolderForPlaylist(self, directoryName):
+        os.chdir('MusicDownloads/')
+        os.mkdir(directoryName)
+        os.chdir('..')
+        
     def listPlaylists(self):
         for pos, name in enumerate(self.testPlaylists):
             print(f"{pos+1}. {self.testPlaylists[pos]['name']}")
+            self.playlistNames[pos+1] = self.testPlaylists[pos]['name']
         
     def assignPlaylistToID(self):
         self.idDict = dict()
@@ -36,7 +43,7 @@ class Playlists():
         try:
             self.chosenPlaylist = int(input("Playlist to Download: "))
             if self.chosenPlaylist not in self.idDict:
-                askAgain()
+                askAgain() 
         except Exception as e:
             askAgain()
             
@@ -83,7 +90,13 @@ class Songs(Playlists):
     def listSongsRequested(self):
         self.songs = self.specificPlaylistSongDict(4)
         
-
+        
+if __name__ == "__main__":
+    songs = Playlists()
+    songs.makeFolderForPlaylist('ab')  
+    songs.askForPlaylistToDownload()
+    print(songs.playlistNames[songs.chosenPlaylist])
+    songs.makeFolderForPlaylist('ab')
 
 
 
