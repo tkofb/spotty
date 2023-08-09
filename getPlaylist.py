@@ -46,12 +46,10 @@ class Songs(Playlists):
         super().__init__()
         
     def songDict(self, hashcode):
-        songs = dict()
-        
         #Spotify API only letrs you gain access to 100 songs in a playlist
         self.songs = self.sp.playlist_items(self.idDict[hashcode], limit=100)
         
-        print(len(self.songs['items']))
+        self.youtubeQuery = dict()
         
         for i in range(len(self.songs['items'])):
             
@@ -72,10 +70,9 @@ class Songs(Playlists):
             album = "" if self.songs['items'][i]['track']['album']['album_type'] != 'album' else f" | Album: {self.songs['items'][i]['track']['album']['name']}"
             
                 
-            print(songName + allArtists + album)
+            self.youtubeQuery[i+1] = songName + allArtists + album
             
-        
-        return songs
+        return self.youtubeQuery
     
     def specificPlaylistSongDict(self,playlistNumber):
         if type(playlistNumber) != int or playlistNumber not in self.idDict:
@@ -86,10 +83,7 @@ class Songs(Playlists):
     def listSongsRequested(self):
         self.songs = self.specificPlaylistSongDict(4)
         
-    
-        
-playlist = Songs()  
-playlist.listSongsRequested()
+
 
 
 
