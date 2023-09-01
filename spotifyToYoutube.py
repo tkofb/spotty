@@ -14,9 +14,6 @@ class YoutubeConversion(Songs):
         self.getYoutubeURLS()
         print(self.songToYoutube.values())
         print(self.songToYoutube.keys())
-        
-        
-        
     
     def getYoutubeURLS(self):
         self.songToYoutube = dict()
@@ -44,10 +41,19 @@ class YoutubeConversion(Songs):
             
             self.songToYoutube[songCount] = youtubeUrl
             
+    def setFileName(self, name):
+        self.fileName = name
+    
+    def askForFileName(self):
+        name = input("What do you want to name the plalist? ")
+        self.setFileName(name)
+                    
     def downloadYoutubeURL(self):
+        self.askForFileName()
+        
         for songNumber, i in enumerate(self.songToYoutube.values()):
             downloadSong(i)
-            print(f"Song: {songNumber} finished downloading")
+            print(f"Song {songNumber + 1} finished downloading")
          
             
             
