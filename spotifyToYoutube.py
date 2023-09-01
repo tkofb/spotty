@@ -2,12 +2,21 @@ import os
 import json
 import requests
 from getPlaylist import Songs
+from testYoutubeDownload import downloadSong
 
 
 class YoutubeConversion(Songs):
     def __init__(self):
         super().__init__()
-        self.specificPlaylistSongDict(5)
+        self.askForPlaylistToDownload()
+        self.specificPlaylistSongDict(self.chosenPlaylist)
+        
+        self.getYoutubeURLS()
+        print(self.songToYoutube.values())
+        print(self.songToYoutube.keys())
+        
+        
+        
     
     def getYoutubeURLS(self):
         self.songToYoutube = dict()
@@ -20,6 +29,7 @@ class YoutubeConversion(Songs):
                 "key":"AIzaSyAAIReGu0D9R8eQf8WMUz-_ohrQ9hkdFE0",
                 "q": songName
             }
+            
             queryRequest = requests.get(url=url, params=params)
             
             if 'error' in queryRequest.json():
@@ -35,7 +45,9 @@ class YoutubeConversion(Songs):
             self.songToYoutube[songCount] = youtubeUrl
             
     def downloadYoutubeURL(self):
-        pass
+        for songNumber, i in enumerate(self.songToYoutube.values()):
+            downloadSong(i)
+            print(f"Song: {songNumber} finished downloading")
          
             
             
@@ -45,5 +57,5 @@ class YoutubeConversion(Songs):
 
 if __name__ == "__main__":
     youtube = YoutubeConversion()
-    youtube.getYoutubeIDs()
+    youtube.downloadYoutubeURL()
 
