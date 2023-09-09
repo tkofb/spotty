@@ -7,7 +7,7 @@ def downloadSong(youtubeLink):
     audioOnlyStreams = yt.streams.filter(only_audio=True)
     firstStream = audioOnlyStreams[0]
 
-    firstStream.download(output_path = f'MusicDownloads/{self.fileName}', filename = f'{yt.title}.mp3')
+    firstStream.download(output_path = f'MusicDownloads/{fileName}', filename = f'{yt.title}.mp3')
     
     return yt.title() 
     
