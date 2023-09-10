@@ -35,7 +35,6 @@ class Playlists():
             
             os.mkdir('MusicDownloads/')
         except: os.mkdir('MusicDownloads/')
-            
         
     def deleteSpecificPlaylistWithNumber(self, playlistNumber):
         if playlistNumber not in self.playlistNames: return
@@ -92,7 +91,6 @@ class Playlists():
 class Songs(Playlists):
     def __init__(self):
         super().__init__()
-    
         
     def songDict(self, hashcode):
         #Spotify API only lets you gain access to 100 songs in a playlist
@@ -101,7 +99,6 @@ class Songs(Playlists):
         self.youtubeQuery = dict()
         
         for i in range(len(self.songs['items'])):
-            
             songName = self.songs['items'][i]['track']['name']
             
             allArtists = " - "
@@ -109,12 +106,11 @@ class Songs(Playlists):
             
             for j in range(amountOfArtists):
                 artistName = self.songs['items'][i]['track']['artists'][j]['name']
+                
                 if j == amountOfArtists - 1: 
                     allArtists += artistName
                     break
                 allArtists += f"{artistName}, "
-                
-            # album = "" if self.songs['items'][i]['track']['album']['album_type'] != 'album' else f" | Album: {self.songs['items'][i]['track']['album']['name']}"
                 
             self.youtubeQuery[i+1] = songName + allArtists
             
@@ -133,13 +129,9 @@ class Songs(Playlists):
         
 if __name__ == "__main__":
     songs = Songs()
-    # songs.listSongsRequested()
     playlistName = songs.getPlaylistName(number=2)
     
-    songs.makeFolderForPlaylistWithNumber(1)  
-    # songs.askForPlaylistToDownload()
-    # print(songs.playlistNames[songs.chosenPlaylist])
-    # songs.makeFolderForPlaylist('ab')
+    songs.makeFolderForPlaylistWithNumber(1)
 
 
 
