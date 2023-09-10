@@ -113,13 +113,10 @@ class Songs(Playlists):
                     allArtists += artistName
                     break
                 allArtists += f"{artistName}, "
-            
-            
                 
-            album = "" if self.songs['items'][i]['track']['album']['album_type'] != 'album' else f" | Album: {self.songs['items'][i]['track']['album']['name']}"
-            
+            # album = "" if self.songs['items'][i]['track']['album']['album_type'] != 'album' else f" | Album: {self.songs['items'][i]['track']['album']['name']}"
                 
-            self.youtubeQuery[i+1] = songName + allArtists + album
+            self.youtubeQuery[i+1] = songName + allArtists
             
         return self.youtubeQuery
     
