@@ -3,6 +3,7 @@ import shutil
 import json
 import requests
 import spotipy
+from math import ceil
 from spotipy.oauth2 import SpotifyOAuth
 from spotifyObject import SpotipyObject
 # Been using this treeVisualizer to help with JSON objects
@@ -13,7 +14,6 @@ class Playlists():
         self.sp = SpotipyObject().spotifyObject
         self.testPlaylists = self.sp.current_user_playlists()['items']
         self.assignPlaylistToID()
-        self.playlistNames = dict()
         self.setPlaylistNames()
 
     # All File Operations
@@ -57,6 +57,8 @@ class Playlists():
         return self.playlistNames[number]
         
     def setPlaylistNames(self):
+        self.playlistNames = dict()
+        
         for pos, name in enumerate(self.testPlaylists):
             self.playlistNames[pos+1] = self.testPlaylists[pos]['name']
     
@@ -92,27 +94,69 @@ class Songs(Playlists):
     def __init__(self):
         super().__init__()
         
+        self.spotifyObjects = []
+        self.youtubeQuery = dict()
+    
+    #Did this because the spotify API surprisingly doesn't have a total length variable
+    def playlistLength(self, playlistNumber):
+        length = 0
+        offset = 0
+        
+        while True:
+            currentPlaylistLength = len(self.sp.playlist_items(self.idDict[playlistNumber],offset=offset)['items'])
+            
+            if (currentPlaylistLength != 100): 
+                length += currentPlaylistLength
+                break
+            else:
+                length += 100
+                offset += 100
+                
+        return length
+    
+    def createNecessarySpotifyObjects(self, playlistNumber):
+        separator = 0
+        objectCount = ceil(self.playlistLength(playlistNumber)/100)
+        
+        for i in range(objectCount):
+            currentObject = self.sp.playlist_items(self.idDict[playlistNumber], offset=separator, limit=100)
+            self.spotifyObjects.append(currentObject)
+            separator += 100
+                     
+        
     def songDict(self, hashcode):
         #Spotify API only lets you gain access to 100 songs in a playlist
+        self.createNecessarySpotifyObjects(hashcode)
+        
+        songNumber = 1
+        
         self.songs = self.sp.playlist_items(self.idDict[hashcode], limit=100)
         
-        self.youtubeQuery = dict()
-        
-        for i in range(len(self.songs['items'])):
-            songName = self.songs['items'][i]['track']['name']
-            
-            allArtists = " - "
-            amountOfArtists = len(self.songs['items'][i]['track']['artists'])
-            
-            for j in range(amountOfArtists):
-                artistName = self.songs['items'][i]['track']['artists'][j]['name']
+        for spotifyObject in self.spotifyObjects:
+                for i in range(len(spotifyObject['items'])):
+                    songName = spotifyObject['items'][i]['track']['name']
+                    
+                    allArtists = " - "
+                    
+                    #In case the artist is lesser known and doesn't have an established artist page
+                    try:
+                        amountOfArtists = len(spotifyObject['items'][i]['track']['artists'])
+                    except KeyError:
+                        amountOfArtists = 0
+                        allArtists += spotifyObject['items'][i]['track']['show']['publisher']
+                    
+                    for j in range(amountOfArtists):
+                        artistName = spotifyObject['items'][i]['track']['artists'][j]['name']
+                        
+                        if j == amountOfArtists - 1: 
+                            allArtists += artistName
+                            break
+                        allArtists += f"{artistName}, "
+                        
+                    self.youtubeQuery[songNumber] = songName + allArtists
+                    songNumber += 1
+                    
                 
-                if j == amountOfArtists - 1: 
-                    allArtists += artistName
-                    break
-                allArtists += f"{artistName}, "
-                
-            self.youtubeQuery[i+1] = songName + allArtists
             
         return self.youtubeQuery
     
@@ -129,9 +173,8 @@ class Songs(Playlists):
         
 if __name__ == "__main__":
     songs = Songs()
-    playlistName = songs.getPlaylistName(number=2)
     
-    songs.makeFolderForPlaylistWithNumber(1)
+    songs.songDict(2)
 
 
 
