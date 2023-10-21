@@ -20,3 +20,4 @@ class SpotipyObject:
         self.spotifyObject = spotipy.Spotify(auth_manager=SpotifyOAuth( 
             scope=self.scope, client_id=self.clientId, client_secret=self.clientSecret, redirect_uri="http://localhost:8888/callback", 
             cache_path='/home/jani/Projects/SpotifyToMP3/.cache-tkogds@gmail.com'))
+        
