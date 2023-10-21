@@ -77,15 +77,14 @@ class Playlists():
             print("INVALID PLAYLIST TRY AGAIN")
             self.askForPlaylistToDownload()
         
-        print("Which playlist would you like to download?")
         print("------------------------------------------")
         self.listPlaylists()
         print("------------------------------------------")
         
         try:
             self.chosenPlaylist = int(input("Playlist to Download: "))
-            if self.chosenPlaylist not in self.idDict:
-                askAgain() 
+            if self.chosenPlaylist not in self.idDict: askAgain() 
+            else: print()
         except Exception as e:
             askAgain()
             
@@ -122,8 +121,7 @@ class Songs(Playlists):
             currentObject = self.sp.playlist_items(self.idDict[playlistNumber], offset=separator, limit=100)
             self.spotifyObjects.append(currentObject)
             separator += 100
-                     
-        
+             
     def songDict(self, hashcode):
         #Spotify API only lets you gain access to 100 songs in a playlist
         self.createNecessarySpotifyObjects(hashcode)
@@ -156,8 +154,6 @@ class Songs(Playlists):
                     self.youtubeQuery[songNumber] = songName + allArtists
                     songNumber += 1
                     
-                
-            
         return self.youtubeQuery
     
     def specificPlaylistSongDict(self,playlistNumber):
