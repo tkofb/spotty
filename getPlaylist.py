@@ -131,6 +131,7 @@ class Songs(Playlists):
         self.songs = self.sp.playlist_items(self.idDict[hashcode], limit=100)
         
         for spotifyObject in self.spotifyObjects:
+            
                 for i in range(len(spotifyObject['items'])):
                     songName = spotifyObject['items'][i]['track']['name']
                     

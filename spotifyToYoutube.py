@@ -4,6 +4,8 @@ import requests
 from getPlaylist import Songs
 from pytube import YouTube
 from youtubesearchpython import *
+import mutagen
+from mutagen.easyid3 import EasyID3
 
 class YoutubeConversion(Songs):
     def __init__(self):
@@ -39,7 +41,7 @@ class YoutubeConversion(Songs):
         self.fileName = name
 
     def askForMetadizationFormat(self):
-        name = input("Would you like to include the artist name in download format? (Y/N): ")
+        name = input("Would you like to metadize your music? (Y/N): ")
         
         if(name == 'Y' or name == 'y'): self.metadize = True
         else: self.metadize = False
@@ -54,12 +56,12 @@ class YoutubeConversion(Songs):
         
         for songNumber, i in enumerate(self.songToYoutube.values()):
             try:
-                currentSong,artist = self.downloadSong(i,self.metadize)
+                currentSong,artist = self.downloadSong(i, self.metadize, songNumber + 1)
                 print(f"Song: {currentSong} by {artist} finished downloading ({songNumber+1}/{len(self.youtubeQuery)})")
             except Exception as e:
                 print(e)
             
-    def downloadSong(self, youtubeLink, metadize):
+    def downloadSong(self, youtubeLink, metadize, songIndex):
         yt = YouTube(youtubeLink)
         song = yt.title
         artist = yt.author
@@ -70,13 +72,36 @@ class YoutubeConversion(Songs):
         if '/' in song: song = song.replace('/','')
         if '/' in artist: artist = artist.replace('/','')
         
-        if(metadize):
-            firstStream.download(output_path = f'MusicDownloads/{self.fileName}', filename = f'{song}|-|{artist}.mp3')
-        else:
-            firstStream.download(output_path = f'MusicDownloads/{self.fileName}', filename = f'{song}.mp3')
+        songPath = f'MusicDownloads/{self.fileName}'
         
-        return (song,artist) 
+        firstStream.download(output_path = songPath, filename = f'{song}.mp3')
+        
+        if(metadize): self.metadizeSong(songPath + f'/{song}.mp3', songIndex)
+            
+        return (song,artist)
+    
+    def metadizeSong(self, songPath, songNumber):
+        try:
+            song = EasyID3(songPath)
+        except:
+            song = mutagen.File(songPath, easy = True)
+            song.add_tags()
+            
+        song['artist'] = None
+        song['genre'] = None
+        song['playlist'] = self.fileName
+        song.save(songPath)
+        print(song)
+        
+        
+        
+            
+        
+        
+        
          
 if __name__ == "__main__":
     youtube = YoutubeConversion()
     youtube.downloadAllSongs()
+    
+    
