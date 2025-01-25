@@ -1,3 +1,6 @@
 .env
-.cache-tkogds@gmail.com
 credentials.json
+__pycache__
+.cache
+music/*
+dependencies.txt

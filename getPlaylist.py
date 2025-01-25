@@ -6,8 +6,6 @@ import spotipy
 from math import ceil
 from spotipy.oauth2 import SpotifyOAuth
 from spotifyObject import SpotipyObject
-# Been using this treeVisualizer to help with JSON objects
-from treeVisualizer import visualizeDict 
 
 class Playlists():
     def __init__(self):
@@ -19,41 +17,38 @@ class Playlists():
     # All File Operations
     
     def makeFolderForPlaylistWithName(self, directoryName):
-        os.chdir('MusicDownloads/')
+        os.chdir('music/')
         os.mkdir(directoryName)
         os.chdir('..')
         
     def makeFolderForPlaylistWithNumber(self, playlistNumber):
-        os.chdir('MusicDownloads/')
-        os.mkdir(self.getPlaylistName(1))
+        os.chdir('music/')
+        os.mkdir(self.getPlaylistName(playlistNumber))
         os.chdir('..')
         
     def removeAllPlaylists(self):
         try:
-            currentDirectory = '/home/jani/Projects/SpotifyToMP3/MusicDownloads'
+            currentDirectory = 'music/'
             shutil.rmtree(currentDirectory)
             
-            os.mkdir('MusicDownloads/')
-        except: os.mkdir('MusicDownloads/')
+            os.mkdir('music/')
+        except: os.mkdir('music/')
         
     def deleteSpecificPlaylistWithNumber(self, playlistNumber):
         if playlistNumber not in self.playlistNames: return
         
         playlist = self.getPlaylistName(number=playlistNumber)
         
-        os.chdir('MusicDownloads/')
+        os.chdir('music/')
         shutil.rmtree(playlist)
         os.chdir('..')
         
     def deleteSpecificPlaylistWithName(self, playlistName):
-        if playlistName not in self.playlistNames.values(): return
+        for entry in os.listdir("./music"):
+            if playlistName == entry:
+                shutil.rmtree(f"./music/{entry}")
         
-        for pos,value in enumerate(self.playlistNames.values()):
-            if value == playlistName: playlistLocation = pos
-        
-        self.deleteSpecificPlaylistWithNumber(playlistLocation)
-        
-    def getPlaylistName(self,number=1):
+    def getPlaylistName(self,number):
         return self.playlistNames[number]
         
     def setPlaylistNames(self):
@@ -92,7 +87,6 @@ class Playlists():
 class Songs(Playlists):
     def __init__(self):
         super().__init__()
-        
         self.spotifyObjects = []
         self.youtubeQuery = dict()
     
@@ -166,21 +160,3 @@ class Songs(Playlists):
     def listSongsRequested(self):
         self.askForPlaylistToDownload()
         self.songs = self.specificPlaylistSongDict(self.chosenPlaylist)
-        
-        
-if __name__ == "__main__":
-    songs = Songs()
-    
-    songs.songDict(2)
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,6 +5,7 @@ import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+
 class SpotipyObject:
     def __init__(self):
         self.requestUserAuthorization()
@@ -14,10 +15,15 @@ class SpotipyObject:
 
         self.clientId = os.getenv("CLIENT_ID")
         self.clientSecret = os.getenv("CLIENT_SECRET")
-        
-        self.scope = 'playlist-read-private playlist-read-collaborative'
 
-        self.spotifyObject = spotipy.Spotify(auth_manager=SpotifyOAuth( 
-            scope=self.scope, client_id=self.clientId, client_secret=self.clientSecret, redirect_uri="http://localhost:8888/callback", 
-            cache_path='/home/jani/Projects/SpotifyToMP3/.cache-tkogds@gmail.com'))
-        
+        self.scope = "playlist-read-private playlist-read-collaborative"
+
+        self.spotifyObject = spotipy.Spotify(
+            auth_manager=SpotifyOAuth(
+                scope=self.scope,
+                client_id=self.clientId,
+                client_secret=self.clientSecret,
+                redirect_uri="http://localhost:8888/callback",
+                cache_path= os.getcwd() + ".cache",
+            )
+        )
