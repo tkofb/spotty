@@ -5,8 +5,6 @@ from getPlaylist import Songs
 from pytube import Search, YouTube
 import yt_dlp
 import logging
-import mutagen
-from mutagen.easyid3 import EasyID3
 import sys
 
 class YoutubeConversion(Songs):
@@ -23,7 +21,6 @@ class YoutubeConversion(Songs):
         pytube_logger = logging.getLogger('pytube')
         pytube_logger.setLevel(logging.ERROR)
         
-        print("Song List:")
 
         for songName in self.youtubeQuery.values():
             songList = Search(songName)
@@ -34,14 +31,14 @@ class YoutubeConversion(Songs):
                 youtubeUrl = "https://www.youtube.com/watch?v=" + videoId
             
                 self.songToYoutube[songCount] = youtubeUrl
-            
+                
                 songCount += 1
                 print(f'{songName} found ({songCount}/{len(self.youtubeQuery)})')
             else: 
                 print(f'{songName} NOT FOUND ({songCount}/{len(self.youtubeQuery)})')
     
     def askForFileName(self):
-        name = input("What do you want to name the playlist? ")
+        name = input("what do you want to name the playlist [default is original name]? ")
         self.fileName = name
         
         if self.fileName == "":
@@ -49,16 +46,20 @@ class YoutubeConversion(Songs):
         
             
     def downloadAllSongs(self):
-        print()
+        print('─' * self.term_size.columns)
         self.askForFileName()
         
         self.deleteSpecificPlaylistWithName(self.fileName)
         self.makeFolderForPlaylistWithName(self.fileName)
 
-        for songNumber, i in enumerate(self.songToYoutube.values()):
-            self.download_audio(i)
+        count = 1
 
-    def download_audio(self, link):
+        print('─' * self.term_size.columns)
+        for songNumber, i in enumerate(self.songToYoutube.values()):
+            self.download_audio(i, count)
+            count += 1
+
+    def download_audio(self, link, count):
         def download_hook(d):
             if d['status'] == 'downloading':
                 sys.stdout.write(
@@ -66,7 +67,7 @@ class YoutubeConversion(Songs):
                 )
                 sys.stdout.flush()
             elif d['status'] == 'finished':
-                print(f"\n[download] Completed: {d['filename']}")
+                print(f"\n[download] completed: {d['filename']} [{count}/{self.playlistLen}]")
 
         ydl_opts = {
             'quiet': True, 
@@ -78,6 +79,7 @@ class YoutubeConversion(Songs):
 
         with yt_dlp.YoutubeDL(ydl_opts) as video:
             video.extract_info(link, download=True)
+        print('─' * self.term_size.columns)
 
          
 if __name__ == "__main__":

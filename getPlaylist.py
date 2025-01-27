@@ -11,6 +11,7 @@ class Playlists():
     def __init__(self):
         self.sp = SpotipyObject().spotifyObject
         self.testPlaylists = self.sp.current_user_playlists()['items']
+        self.term_size = os.get_terminal_size()
         self.assignPlaylistToID()
         self.setPlaylistNames()
 
@@ -72,14 +73,13 @@ class Playlists():
             print("INVALID PLAYLIST TRY AGAIN")
             self.askForPlaylistToDownload()
         
-        print("------------------------------------------")
+        print('─' * self.term_size.columns)
         self.listPlaylists()
-        print("------------------------------------------")
+        print('─' * self.term_size.columns)
         
         try:
-            self.chosenPlaylist = int(input("Playlist to Download: "))
+            self.chosenPlaylist = int(input("playlist to download [number]: "))
             if self.chosenPlaylist not in self.idDict: askAgain() 
-            else: print()
         except Exception as e:
             askAgain()
             
@@ -105,6 +105,9 @@ class Songs(Playlists):
                 length += 100
                 offset += 100
                 
+        self.playlistLen = length
+    
+         
         return length
     
     def createNecessarySpotifyObjects(self, playlistNumber):
