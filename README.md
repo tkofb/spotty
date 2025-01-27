@@ -28,10 +28,10 @@ this project allows you to download your favorite playlists from your personal s
 #### 4. Store Credentials in an `.env` File 
 1. Create a file named `.env` in your project directory. 
 2. Add the following lines, replacing the placeholders with your credentials: 
-	``` bash
-	CLIENT_ID=your_client_id_here 
-	CLIENT_SECRET=your_client_secret_here
-	```
+``` bash
+CLIENT_ID=your_client_id_here 
+CLIENT_SECRET=your_client_secret_here
+```
 ## installation
 
 ```bash
